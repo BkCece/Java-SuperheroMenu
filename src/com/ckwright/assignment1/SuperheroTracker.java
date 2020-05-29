@@ -38,19 +38,29 @@ public class SuperheroTracker {
         //Get Json file - database
         //from gson library at com.google.code.gson
         File superheroData = new File("src/com/ckwright/assignment1/SuperheroData.json");
+        List<Superhero> superheroes = new ArrayList<>();
+        extractDatabase(superheroData, superheroes);
 
+        //TEST PRINT RESULTS
+        System.out.println("All of my superheroes are, out of method: " + superheroes);
+
+
+    }//main
+
+    //Simplify main code by extracting in separate method
+    public static void extractDatabase(File f, List l)
+    {
         //Check for Json file to fill database with
         try {
-            /**
-             * Json file reading from Brain Fraser's tutorial
-             * https://youtu.be/HSuVtkdej8Q
-             */
-            JsonElement fileElement = JsonParser.parseReader(new FileReader(superheroData));
+
+            //Json file reading from Brain Fraser's tutorial
+            //https://youtu.be/HSuVtkdej8Q
+            JsonElement fileElement = JsonParser.parseReader(new FileReader(f));
             JsonObject fileObject = fileElement.getAsJsonObject();
 
             //Extract all superheroes
             JsonArray jArrayOfHeroes = fileObject.get("superheroes").getAsJsonArray();
-            List<Superhero> superheroes = new ArrayList<>();
+            //List<Superhero> superheroes = new ArrayList<>();
             for (JsonElement heroElement: jArrayOfHeroes){
                 //Get JsonObject
                 JsonObject heroJsonObject = heroElement.getAsJsonObject();
@@ -76,11 +86,13 @@ public class SuperheroTracker {
                 //}
 
                 Superhero superhero = new Superhero(name, superpower, heightCM, numCiviliansSaved);
-                superheroes.add(superhero);
+                l.add(superhero);
+
             }
 
+
             //TEST PRINT RESULTS
-            System.out.println("All of my superheroes are: " + superheroes);
+            //System.out.println("All of my superheroes are, from method: " + l);
 
         } catch (FileNotFoundException e) {
             //If no database yet, create Json file
@@ -88,7 +100,9 @@ public class SuperheroTracker {
             e.printStackTrace(); //temp
             // ^ delete later
         }
+    }
+    public static void createDatabase(){
+        //create it!
+    }
 
-
-    }//main
 }//SuperheroTracker
