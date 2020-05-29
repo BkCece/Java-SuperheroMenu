@@ -1,5 +1,13 @@
 package com.ckwright.assignment1;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +21,7 @@ import java.util.List;
 public class SuperheroTracker {
     public static void main(String[] args){
         //Set menu title and options
+        //Contained entirely in separate method so we can reuse the Menu class in any other project
         ArrayList<String> superheroMenuOptions = new ArrayList<>();
         superheroMenuOptions.add("List all superheroes");
         superheroMenuOptions.add("Add new superheroes");
@@ -24,15 +33,62 @@ public class SuperheroTracker {
 
         //Create menu
         Menu superheroMenu = new Menu("SuperHero Tracker", superheroMenuOptions);
-
-        //Print menu
         superheroMenu.printMenu();
 
+        //Get Json file - database
+        //from gson library at com.google.code.gson
+        File superheroData = new File("src/com/ckwright/assignment1/SuperheroData.json");
+
         //Check for Json file to fill database with
+        try {
+            /**
+             * Json file reading from Brain Fraser's tutorial
+             * https://youtu.be/HSuVtkdej8Q
+             */
+            JsonElement fileElement = JsonParser.parseReader(new FileReader(superheroData));
+            JsonObject fileObject = fileElement.getAsJsonObject();
 
-        //If no database yet, create Json file
+            //Extract all superheroes
+            JsonArray jArrayOfHeroes = fileObject.get("superheroes").getAsJsonArray();
+            List<Superhero> superheroes = new ArrayList<>();
+            for (JsonElement heroElement: jArrayOfHeroes){
+                //Get JsonObject
+                JsonObject heroJsonObject = heroElement.getAsJsonObject();
 
-        //Prompt user for superhero
+                //Extract data - heroes
+                String name = heroJsonObject.get("name").getAsString();
+
+                //Assume only required field is superhero name
+                //Need default null values for the rest
+                String superpower = null;
+                if(heroJsonObject.has("superpower")){
+                    superpower = heroJsonObject.get("superpower").getAsString();
+                }
+
+                //Double heightCM = null;
+                //if(heroJsonObject.has("heightCM")){
+                Double heightCM = heroJsonObject.get("heightCM").getAsDouble();
+                //}
+
+                //Integer numCiviliansSaved = null;
+                //if(heroJsonObject.has("numSaved")){
+                Integer numCiviliansSaved = heroJsonObject.get("numSaved").getAsInt();
+                //}
+
+                Superhero superhero = new Superhero(name, superpower, heightCM, numCiviliansSaved);
+                superheroes.add(superhero);
+            }
+
+            //TEST PRINT RESULTS
+            System.out.println("All of my superheroes are: " + superheroes);
+
+        } catch (FileNotFoundException e) {
+            //If no database yet, create Json file
+            System.err.println("Error input file not found"); //temp
+            e.printStackTrace(); //temp
+            // ^ delete later
+        }
+
 
     }//main
 }//SuperheroTracker

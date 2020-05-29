@@ -4,10 +4,10 @@ package com.ckwright.assignment1;
 public class Superhero {
 
     //Superhero information
-    String name;
-    String superpower;
-    double heightCM;
-    int numCiviliansSaved;
+    private String name;
+    private String superpower;
+    private double heightCM;
+    private int numCiviliansSaved;
 
     //Superhero constructor
     public Superhero(String name, String superpower, double heightCM, int numCiviliansSaved) {

@@ -1,0 +1,29 @@
+{
+  "superheroes": [
+    {
+      "name": "Captain Marvel",
+      "superpower": "Photo Blast",
+      "heightCM": "170.0",
+      "numSaved": 5
+    },
+    {
+      "name": "The Batman",
+      "superpower": "Super Rich",
+      "heightCM": "183.0",
+      "numSaved": 20
+    },
+    {
+      "name": "Earthworm Jim",
+      "superpower": "Superior Strength",
+      "heightCM": "173.0",
+      "numSaved": 0
+    },
+    {
+      "name": "Storm",
+      "superpower": "Control Weather",
+      "heightCM": "200.0",
+      "numSaved": 10
+    }
+  ]
+
+}

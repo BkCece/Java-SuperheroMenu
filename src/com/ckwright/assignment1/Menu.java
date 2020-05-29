@@ -18,7 +18,9 @@ public class Menu {
         printStarRow();
 
         //Print menu options
-
+        for (int i = 1; i < arrMenuOptions.size(); i++){
+            System.out.println(i + ": " + arrMenuOptions.get(i));
+        }//for
 
     }//printMenu
 
