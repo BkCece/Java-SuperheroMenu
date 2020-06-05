@@ -1,5 +1,5 @@
 # Java-SuperheroMenu
-A Superhero menu created for SFU's CMPT213, taught by Victor Cheung, Spring 2020.The course focus was on Object-Oriented Design (OOD) using Java Programming. The course included inheritance, polymorhism, interfaces, and abstract classes, as well as best practices for code construction and an introduction to progamming event driven graphical user interfaces (GUI).
+A Superhero menu created for SFU's CMPT213, taught by Victor Cheung, Summer 2020.The course focus was on Object-Oriented Design (OOD) using Java Programming. The course included inheritance, polymorhism, interfaces, and abstract classes, as well as best practices for code construction and an introduction to progamming event driven graphical user interfaces (GUI).
 
 This repository includes assignment 1 from the course, roughly one month into the 4 month term.
 
