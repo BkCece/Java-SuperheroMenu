@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,7 +90,7 @@ public class SuperheroTracker {
                 System.out.println("Please enter a valid hero number");
                 choice = 0;
             }
-        } while ((choice > superheroes.size()) || (choice == 0) || (choice < 0));
+        } while ((choice > superheroes.size()) || (choice < 0));
 
         //if not quit
         if (choice != 0) {
@@ -124,7 +125,7 @@ public class SuperheroTracker {
                 choice = 0;
             }
 
-        } while ((choice > superheroes.size()) || (choice == 0) || (choice < 0));
+        } while ((choice > superheroes.size()) || (choice < 0));
 
         //Only proceed if not 0
         if (choice != 0) {
@@ -247,9 +248,46 @@ public class SuperheroTracker {
     }
 
     //Write new data to database in json file
-    public static void writeToDatabase(File f, List<Superhero> l) {
-        JsonObject objSuperheroes = new JsonObject();
+    public static void writeToDatabase(List<Superhero> l, String path){
+        try {
+            FileWriter superheroFile = new FileWriter(path);
+            JsonObject objSuperheroes = new JsonObject();
+            JsonArray arrSuperheroes = new JsonArray();
 
+            //Add heroes to object
+            for (int i = 0; i < superheroes.size(); i++){
+                //Temp array for individual hero info
+                JsonArray arrSuperheroInfo = new JsonArray();
+
+                arrSuperheroInfo.add("name: " + superheroes.get(i).getName());
+                arrSuperheroInfo.add("superpower: " + superheroes.get(i).getSuperpower());
+                arrSuperheroInfo.add("heightCM: " + superheroes.get(i).getHeightCM());
+                arrSuperheroInfo.add("numSaved: " + superheroes.get(i).getNumCiviliansSaved());
+
+                arrSuperheroes.add(arrSuperheroInfo);
+            }
+            objSuperheroes.add("superheroes", arrSuperheroes);
+            System.out.println("heroes " + arrSuperheroes);
+            try{
+                superheroFile.write(objSuperheroes.toString());
+                System.out.println("Database updated!");
+
+            }catch (Exception ex){
+                System.out.println("Could not update database...");
+
+            }finally {
+                try {
+
+                    superheroFile.flush();
+                    superheroFile.close();
+
+                }catch (Exception ex){
+                    System.out.println("Could not close file...");
+                }
+            }
+        }catch(Exception ex){
+            System.out.println("Could not creat file!");
+        }
     }
 
     public static void main(String[] args) {
@@ -269,7 +307,8 @@ public class SuperheroTracker {
 
         //Get Json file - database
         //from gson library at com.google.code.gson
-        File superheroData = new File("src/com/ckwright/assignment1/SuperheroData.json");
+        String filePath = "src/com/ckwright/assignment1/SuperheroData.json";
+        File superheroData = new File(filePath);
 
         //Check for database json file
         if (!superheroData.exists()) {
@@ -367,7 +406,7 @@ public class SuperheroTracker {
             } while (choice != 7);
 
             //Overwrite/write to file
-            writeToDatabase(superheroData, superheroes);
+            writeToDatabase(superheroes, filePath);
 
         } else {
             //File couldn't be created
