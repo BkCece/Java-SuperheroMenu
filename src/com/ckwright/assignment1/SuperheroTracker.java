@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -58,6 +59,7 @@ public class SuperheroTracker {
         System.out.println(superheroes.get(newHeroIndex).getName() + " has been added to the list of superheroes.");
     }
 
+    //Remove a superhero
     public static void removeSuperhero() {
         //Loop while choice is invalid/not exit
         do{
@@ -123,6 +125,39 @@ public class SuperheroTracker {
 
             //Write new data to json file ******
 
+        }
+    }
+
+    //Get top 3 superheroes
+    public static void getTopSuperheroes(int n){
+        //Array for top heroes
+        //Size is flexible, depends on parameter
+        List<Superhero> arrSorted = new ArrayList<>();
+        arrSorted = superheroes;
+
+        //Loop through to sort heroes in our temp list
+        for(int i = 0; i < arrSorted.size(); i++){
+            for (int j = i+1; j < arrSorted.size(); j++){
+                if(arrSorted.get(i).getNumCiviliansSaved() < arrSorted.get(j).getNumCiviliansSaved()){
+                    Collections.swap(arrSorted, i, j);
+                }
+            }
+        }
+
+        //Get top 3
+        if(arrSorted.size() < 3){
+            System.out.println("Not enough superheroes for a Top 3 List!");
+
+        //If any of top 3 are 0 saved, not enough heroes
+        }else if(arrSorted.get(0).getNumCiviliansSaved() == 0 ||
+                arrSorted.get(1).getNumCiviliansSaved() == 0 ||
+                arrSorted.get(2).getNumCiviliansSaved() == 0){
+
+            System.out.println("The superheroes have not saved enough civilians.");
+        }else{
+            System.out.println("1. " + arrSorted.get(0).getName() + " has saved " + arrSorted.get(0).getNumCiviliansSaved() + " civilians.");
+            System.out.println("2. " + arrSorted.get(1).getName() + " has saved " + arrSorted.get(1).getNumCiviliansSaved() + " civilians.");
+            System.out.println("3. " + arrSorted.get(2).getName() + " has saved " + arrSorted.get(2).getNumCiviliansSaved() + " civilians.");
         }
     }
 
@@ -238,7 +273,7 @@ public class SuperheroTracker {
 
                     //List top 3
                     case 5:
-
+                        getTopSuperheroes(3);
                         break;
 
                     //Debug dump
