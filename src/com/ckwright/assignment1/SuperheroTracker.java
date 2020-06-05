@@ -27,6 +27,10 @@ public class SuperheroTracker {
     public static int choice;
     public static String strChoice;
 
+    //Globals for files
+    public static boolean fileDNE = true;
+    public static boolean emptyFile = true;
+
     //Print all heroes
     public static void displayAllHeroes() {
         for (int i = 0; i < superheroes.size(); i++) {
@@ -51,18 +55,29 @@ public class SuperheroTracker {
         System.out.print("Enter Hero's Superpower: ");
         String power = input.next();
 
-        //Add new superhero
-        superheroes.add(new Superhero(name, power, height, 0));
+        //Try to add new superhero
+        try {
+            //Add new superhero
+            superheroes.add(new Superhero(name, power, height, 0));
 
-        //Display new superhero
-        int newHeroIndex = superheroes.size() - 1;
-        System.out.println(superheroes.get(newHeroIndex).getName() + " has been added to the list of superheroes.");
+            //Display new superhero
+            int newHeroIndex = superheroes.size() - 1;
+            System.out.println(superheroes.get(newHeroIndex).getName() + " has been added to the list of superheroes.");
+
+            emptyFile = false;
+
+        } catch (Exception ex) {
+            System.out.println("New superhero couldn't be added!");
+
+            emptyFile = true;
+        }
+
     }
 
     //Remove a superhero
     public static void removeSuperhero() {
         //Loop while choice is invalid/not exit
-        do{
+        do {
             System.out.println("Enter hero number to be removed or enter 0 to cancel");
             System.out.print("Enter >>");
             strChoice = input.next();
@@ -74,13 +89,22 @@ public class SuperheroTracker {
                 System.out.println("Please enter a valid hero number");
                 choice = 0;
             }
-        }while((choice > superheroes.size()) || (choice == 0) || (choice < 0));
+        } while ((choice > superheroes.size()) || (choice == 0) || (choice < 0));
 
         //if not quit
-        if(choice != 0){
-            //Remove hero & display to screen
-            System.out.println(superheroes.get(choice - 1).getName() + " has been removed from the list of superheroes.");
-            superheroes.remove(choice - 1);
+        if (choice != 0) {
+            //If this is not the last superhero
+            if (superheroes.size() > 1) {
+                try {
+                    //Remove hero & display to screen
+                    System.out.println(superheroes.get(choice - 1).getName() + " has been removed from the list of superheroes.");
+                    superheroes.remove(choice - 1);
+                } catch (Exception ex) {
+                    System.out.println("Superhero couldn't be removed!");
+                }
+            } else {
+                System.out.println("That's your only superhero! Try another menu option.");
+            }
         }
     }
 
@@ -117,52 +141,60 @@ public class SuperheroTracker {
                 }
             } while (count == -1);
 
-            //Display new count
-            int previousNumSaved = superheroes.get(choice - 1).getNumCiviliansSaved();
-            superheroes.get(choice - 1).setNumCiviliansSaved(count);
-            System.out.println("Number of civilians saved by " + superheroes.get(choice - 1).getName()
-                    + " has been updated from " + previousNumSaved + " to " + superheroes.get(choice - 1).getNumCiviliansSaved());
+            try {
+                //Display new count
+                int previousNumSaved = superheroes.get(choice - 1).getNumCiviliansSaved();
+                superheroes.get(choice - 1).setNumCiviliansSaved(count);
+                System.out.println("Number of civilians saved by " + superheroes.get(choice - 1).getName()
+                        + " has been updated from " + previousNumSaved + " to " + superheroes.get(choice - 1).getNumCiviliansSaved());
 
-            //Write new data to json file ******
+            } catch (Exception ex) {
+                System.out.println("The number of civilians saved could not be updated!");
+            }
 
         }
     }
 
     //Get top 3 superheroes
-    public static void getTopSuperheroes(int n){
-        //Array for top heroes
-        //Size is flexible, depends on parameter
-        List<Superhero> arrSorted = new ArrayList<>();
-        arrSorted = superheroes;
+    public static void getTopSuperheroes(int n) {
+        try {
+            //Array for top heroes
+            //Size is flexible, depends on parameter
+            //Temp list
+            List<Superhero> arrSorted = new ArrayList<>();
+            arrSorted = superheroes;
 
-        //Loop through to sort heroes in our temp list
-        for(int i = 0; i < arrSorted.size(); i++){
-            for (int j = i+1; j < arrSorted.size(); j++){
-                if(arrSorted.get(i).getNumCiviliansSaved() < arrSorted.get(j).getNumCiviliansSaved()){
-                    Collections.swap(arrSorted, i, j);
+            //Loop through to sort heroes in a temp list
+            for (int i = 0; i < arrSorted.size(); i++) {
+                for (int j = i + 1; j < arrSorted.size(); j++) {
+                    if (arrSorted.get(i).getNumCiviliansSaved() < arrSorted.get(j).getNumCiviliansSaved()) {
+                        Collections.swap(arrSorted, i, j);
+                    }
                 }
             }
-        }
 
-        //Get top 3
-        if(arrSorted.size() < 3){
-            System.out.println("Not enough superheroes for a Top 3 List!");
+            //Get top 3
+            if (arrSorted.size() < 3) {
+                System.out.println("Not enough superheroes for a Top 3 List!");
 
-        //If any of top 3 are 0 saved, not enough heroes
-        }else if(arrSorted.get(0).getNumCiviliansSaved() == 0 ||
-                arrSorted.get(1).getNumCiviliansSaved() == 0 ||
-                arrSorted.get(2).getNumCiviliansSaved() == 0){
+                //If any of top 3 are 0 saved, not enough heroes
+            } else if (arrSorted.get(0).getNumCiviliansSaved() == 0 ||
+                    arrSorted.get(1).getNumCiviliansSaved() == 0 ||
+                    arrSorted.get(2).getNumCiviliansSaved() == 0) {
 
-            System.out.println("The superheroes have not saved enough civilians.");
-        }else{
-            System.out.println("1. " + arrSorted.get(0).getName() + " has saved " + arrSorted.get(0).getNumCiviliansSaved() + " civilians.");
-            System.out.println("2. " + arrSorted.get(1).getName() + " has saved " + arrSorted.get(1).getNumCiviliansSaved() + " civilians.");
-            System.out.println("3. " + arrSorted.get(2).getName() + " has saved " + arrSorted.get(2).getNumCiviliansSaved() + " civilians.");
+                System.out.println("The superheroes have not saved enough civilians.");
+            } else {
+                System.out.println("1. " + arrSorted.get(0).getName() + " has saved " + arrSorted.get(0).getNumCiviliansSaved() + " civilians.");
+                System.out.println("2. " + arrSorted.get(1).getName() + " has saved " + arrSorted.get(1).getNumCiviliansSaved() + " civilians.");
+                System.out.println("3. " + arrSorted.get(2).getName() + " has saved " + arrSorted.get(2).getNumCiviliansSaved() + " civilians.");
+            }
+        } catch (Exception ex) {
+            System.out.println("The top 3 list could not be printed!");
         }
     }
 
     //Simplify main code by extracting in separate method
-    public static void extractDatabase(File f, List l) {
+    public static void extractDatabase(File f, List<Superhero> l) {
         //Check for Json file to fill database with
         try {
 
@@ -209,20 +241,18 @@ public class SuperheroTracker {
 
         } catch (FileNotFoundException e) {
             //If no database yet, create Json file
-            System.err.println("Error input file not found"); //temp
-            e.printStackTrace(); //temp
-            // ^ delete later
+            System.err.println("Error input file not found");
+            e.printStackTrace();
         }
     }
 
+    //Write new data to database in json file
+    public static void writeToDatabase(File f, List<Superhero> l) {
+        JsonObject objSuperheroes = new JsonObject();
+
+    }
+
     public static void main(String[] args) {
-        //Get Json file - database
-        //from gson library at com.google.code.gson
-        File superheroData = new File("src/com/ckwright/assignment1/SuperheroData.json");
-
-        //Extract database to list - database
-        extractDatabase(superheroData, superheroes);
-
         //Set menu title and options
         //Contained entirely in separate method so we can reuse the Menu class in any other project
         ArrayList<String> superheroMenuOptions = new ArrayList<>();
@@ -237,65 +267,113 @@ public class SuperheroTracker {
         //Create menu
         Menu superheroMenu = new Menu("SuperHero Tracker", superheroMenuOptions);
 
-        choice = -1;
-        //Check if exit
-        do {
-            //Print menu & request user input
-            superheroMenu.printMenu();
-            System.out.print("Enter >>");
-            strChoice = input.next();
+        //Get Json file - database
+        //from gson library at com.google.code.gson
+        File superheroData = new File("src/com/ckwright/assignment1/SuperheroData.json");
 
+        //Check for database json file
+        if (!superheroData.exists()) {
             try {
-                choice = Integer.parseInt(strChoice);
-
-                //Menu actions
-                switch (choice) {
-                    //List all
-                    case 1:
-                        displayAllHeroes();
-                        break;
-
-                    //Add new
-                    case 2:
-                        addSuperhero();
-                        break;
-
-                    //Remove
-                    case 3:
-                        removeSuperhero();
-                        break;
-
-                    //Update civilians
-                    case 4:
-                        displayAllHeroes();
-                        updateCivilians();
-                        break;
-
-                    //List top 3
-                    case 5:
-                        getTopSuperheroes(3);
-                        break;
-
-                    //Debug dump
-                    case 6:
-                        System.out.println("All of my superheroes are, out of method: " + superheroes);
-                        break;
-
-                    //Exit!
-                    case 7:
-                        break;
-
-                    default:
-                        System.out.println("Please make a valid selection!");
-                        break;
-                }
-                System.out.println("");
-
+                //New file created, empty
+                superheroData.createNewFile();
+                fileDNE = false;
+                emptyFile = true;
             } catch (Exception ex) {
-                System.out.println("Please make a valid selection!");
+                //File cannot be created
+                System.out.println("Cannot create new file");
+                fileDNE = true;
             }
+        } else {
+            try {
+                //Extract database to list - database
+                extractDatabase(superheroData, superheroes);
 
-        } while (choice != 7);
+                //File exists and is populated
+                fileDNE = false;
+                emptyFile = false;
+            } catch (Exception ex) {
+                //File exists, without data
+                fileDNE = false;
+                emptyFile = true;
+            }
+        }
+
+        //if file exists: continue
+        if (!fileDNE) {
+            //Check if exit
+            do {
+
+                try {
+
+                    //Must add at least one superhero before accessing other menu options
+                    if (!emptyFile) {
+                        //Print menu & request user input
+                        superheroMenu.printMenu();
+                        System.out.print("Enter >>");
+                        strChoice = input.next();
+                        choice = Integer.parseInt(strChoice);
+
+                    } else {
+                        choice = 2;
+                    }
+
+                    //Menu actions
+                    switch (choice) {
+                        //List all
+                        case 1:
+                            displayAllHeroes();
+                            break;
+
+                        //Add new
+                        case 2:
+                            addSuperhero();
+                            break;
+
+                        //Remove
+                        case 3:
+                            removeSuperhero();
+                            break;
+
+                        //Update civilians
+                        case 4:
+                            displayAllHeroes();
+                            updateCivilians();
+                            break;
+
+                        //List top 3
+                        case 5:
+                            getTopSuperheroes(3);
+                            break;
+
+                        //Debug dump
+                        case 6:
+                            System.out.println("All of my superheroes are, out of method: " + superheroes);
+                            break;
+
+                        //Exit!
+                        case 7:
+                            break;
+
+                        default:
+                            System.out.println("Please make a valid selection!");
+                            break;
+                    }
+                    System.out.println("");
+
+                } catch (Exception ex) {
+                    System.out.println("Please make a valid selection!");
+                }
+
+            } while (choice != 7);
+
+            //Overwrite/write to file
+            writeToDatabase(superheroData, superheroes);
+
+        } else {
+            //File couldn't be created
+            System.out.println("File couldn't be created. Please check directory path.");
+            System.out.println("Program will end now. Sorry!");
+        }
 
     }//main
 
