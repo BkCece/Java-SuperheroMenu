@@ -28,6 +28,8 @@ public class SuperheroTracker {
     public static int choice;
     public static String strChoice;
 
+    public static boolean fileDNE = true;
+
     //Print all heroes
     public static void displayAllHeroes(List<Superhero> l) {
         for (int i = 0; i < l.size(); i++) {
@@ -166,7 +168,7 @@ public class SuperheroTracker {
             //Size is flexible, depends on parameter
             //Temp list
             List<Superhero> arrSorted = new ArrayList<Superhero>();
-            for (int i = 0; i < l.size(); i ++){
+            for (int i = 0; i < l.size(); i++) {
                 arrSorted.add(new Superhero(
                         l.get(i).getName(),
                         l.get(i).getSuperpower(),
@@ -204,7 +206,8 @@ public class SuperheroTracker {
     }
 
     //Simplify main code by extracting in separate method
-    public static void extractDatabase(File f, List<Superhero> l) {
+    //Returns true if success, false if error
+    public static boolean extractDatabase(File f, List<Superhero> l) {
         //Check for Json file to fill database with
         try {
 
@@ -244,15 +247,12 @@ public class SuperheroTracker {
                 l.add(superhero);
 
             }
-
-
-            //TEST PRINT RESULTS
-            //System.out.println("All of my superheroes are, from method: " + l);
+            return true;
 
         } catch (FileNotFoundException e) {
             //If no database yet, create Json file
-            System.err.println("Error input file not found");
-            e.printStackTrace();
+            System.out.println("Could not find file!");
+            return false;
         }
     }
 
@@ -312,15 +312,15 @@ public class SuperheroTracker {
 
         //Create menu
         Menu superheroMenu = new Menu("SuperHero Tracker", superheroMenuOptions);
+        List<Superhero> superheroes = new ArrayList<>();
 
         //Get Json file - database
         //from gson library at com.google.code.gson
         String filePath = "src/com/ckwright/assignment1/SuperheroData.json";
-        File superheroData = new File(filePath);
 
-        //Extract database to list - database
-        List<Superhero> superheroes = new ArrayList<>();
-        extractDatabase(superheroData, superheroes);
+
+        File superheroData = new File(filePath);
+        System.out.println("exist " + superheroData.exists());
 
         //Check if exit
         do {
@@ -331,15 +331,36 @@ public class SuperheroTracker {
                 //Print menu & request user input
                 superheroMenu.printMenu();
 
-                //Make the user add a hero first, if there aren't any
-                if (superheroes.isEmpty()) {
-                    choice = 2;
-                } else {
-                    System.out.print("Enter >>");
-                    strChoice = input.next().trim();
-                    input.nextLine();
-                    choice = Integer.parseInt(strChoice);
+                System.out.print("Enter >>");
+                strChoice = input.next().trim();
+                input.nextLine();
+                choice = Integer.parseInt(strChoice);
+
+                //If the user doesn't want to quit
+                if(choice != 7) {
+                    //If the file doesn't exist
+                    if (fileDNE) {
+                        try {
+                            //Attempt to add json data to a superhero list
+                            extractDatabase(superheroData, superheroes);
+                        } catch (Exception ex) {
+                            System.out.println("No database yet, so let's create one!");
+                            superheroData.createNewFile();
+                            choice = 2;
+
+                            fileDNE = false;
+                        }
+                    }
+
+                    //If no heroes, force user to add one
+                    if(superheroes.size() == 0){
+                        System.out.println("No database yet, so let's create one!");
+                        choice = 2;
+                    }
                 }
+
+                //File exists!
+                fileDNE = false;
 
                 //Menu actions
                 switch (choice) {
@@ -355,6 +376,7 @@ public class SuperheroTracker {
 
                     //Remove
                     case 3:
+                        displayAllHeroes(superheroes);
                         removeSuperhero(superheroes);
                         break;
 
@@ -371,7 +393,7 @@ public class SuperheroTracker {
 
                     //Debug dump
                     case 6:
-                        for(int i = 0; i < superheroes.size(); i++){
+                        for (int i = 0; i < superheroes.size(); i++) {
                             System.out.println(i + 1 + ". " + superheroes.get(i));
                         }
 
