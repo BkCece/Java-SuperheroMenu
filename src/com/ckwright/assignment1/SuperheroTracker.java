@@ -21,67 +21,67 @@ import java.util.Scanner;
 public class SuperheroTracker {
 
     //Global list
-    public static List<Superhero> superheroes = new ArrayList<>();
+    //public static List<Superhero> superheroes = new ArrayList<>();
 
     //Globals for Scanner
     public static Scanner input = new Scanner(System.in);
     public static int choice;
     public static String strChoice;
 
-    //Globals for files
-    public static boolean fileDNE = true;
-    public static boolean emptyFile = true;
-
     //Print all heroes
-    public static void displayAllHeroes() {
-        for (int i = 0; i < superheroes.size(); i++) {
+    public static void displayAllHeroes(List<Superhero> l) {
+        for (int i = 0; i < l.size(); i++) {
             System.out.println(i + 1
-                    + ". Hero name: " + superheroes.get(i).getName()
-                    + ", Height: " + superheroes.get(i).getHeightCM()
-                    + ", Superpower: " + superheroes.get(i).getSuperpower()
-                    + ", Saved " + superheroes.get(i).getNumCiviliansSaved() + " civilians."
+                    + ". Hero name: " + l.get(i).getName()
+                    + ", Height: " + l.get(i).getHeightCM()
+                    + ", Superpower: " + l.get(i).getSuperpower()
+                    + ", Saved " + l.get(i).getNumCiviliansSaved() + " civilians."
             );
         }
     }
 
     //Add new heroes
-    public static void addSuperhero() {
+    public static void addSuperhero(List<Superhero> l) {
         //Get new superhero data
-        System.out.print("Enter Hero's name: ");
-        String name = input.next();
+        String name = null;
+        do {
+            System.out.print("Enter Hero's name: ");
+            name = input.nextLine().trim();
+        } while ((name == null) || name.isEmpty());
 
         System.out.print("Enter Hero's height in cm: ");
-        int height = input.nextInt();
+        double height = input.nextDouble();
+        input.nextLine();
 
-        System.out.print("Enter Hero's Superpower: ");
-        String power = input.next();
+        String power = null;
+        do {
+            System.out.print("Enter Hero's Superpower: ");
+            power = input.nextLine().trim();
+        } while ((name == null) || name.isEmpty());
 
         //Try to add new superhero
         try {
             //Add new superhero
-            superheroes.add(new Superhero(name, power, height, 0));
+            l.add(new Superhero(name, power, height, 0));
 
             //Display new superhero
-            int newHeroIndex = superheroes.size() - 1;
-            System.out.println(superheroes.get(newHeroIndex).getName() + " has been added to the list of superheroes.");
-
-            emptyFile = false;
+            int newHeroIndex = l.size() - 1;
+            System.out.println(l.get(newHeroIndex).getName() + " has been added to the list of superheroes.");
 
         } catch (Exception ex) {
             System.out.println("New superhero couldn't be added!");
-
-            emptyFile = true;
         }
 
     }
 
     //Remove a superhero
-    public static void removeSuperhero() {
+    public static void removeSuperhero(List<Superhero> l) {
         //Loop while choice is invalid/not exit
         do {
             System.out.println("Enter hero number to be removed or enter 0 to cancel");
             System.out.print("Enter >>");
-            strChoice = input.next();
+            strChoice = input.next().trim();
+            input.nextLine();
 
             //Test for erroneous input
             try {
@@ -90,16 +90,16 @@ public class SuperheroTracker {
                 System.out.println("Please enter a valid hero number");
                 choice = 0;
             }
-        } while ((choice > superheroes.size()) || (choice < 0));
+        } while ((choice > l.size()) || (choice < 0));
 
         //if not quit
         if (choice != 0) {
             //If this is not the last superhero
-            if (superheroes.size() > 1) {
+            if (l.size() > 1) {
                 try {
                     //Remove hero & display to screen
-                    System.out.println(superheroes.get(choice - 1).getName() + " has been removed from the list of superheroes.");
-                    superheroes.remove(choice - 1);
+                    System.out.println(l.get(choice - 1).getName() + " has been removed from the list of superheroes.");
+                    l.remove(choice - 1);
                 } catch (Exception ex) {
                     System.out.println("Superhero couldn't be removed!");
                 }
@@ -110,12 +110,13 @@ public class SuperheroTracker {
     }
 
     //Update num civilians
-    public static void updateCivilians() {
+    public static void updateCivilians(List<Superhero> l) {
         //Loop until valid choice is made
         do {
             System.out.println("Enter hero number to update civilian count or enter 0 to cancel");
             System.out.print("Enter >>");
-            strChoice = input.next();
+            strChoice = input.next().trim();
+            input.nextLine();
 
             //Test for erroneous input
             try {
@@ -125,7 +126,7 @@ public class SuperheroTracker {
                 choice = 0;
             }
 
-        } while ((choice > superheroes.size()) || (choice < 0));
+        } while ((choice > l.size()) || (choice < 0));
 
         //Only proceed if not 0
         if (choice != 0) {
@@ -134,7 +135,9 @@ public class SuperheroTracker {
             //Loop until valid input
             do {
                 System.out.println("Enter new civilian save count");
-                strChoice = input.next();
+                strChoice = input.next().trim();
+                input.nextLine();
+
                 try {
                     count = Integer.parseInt(strChoice);
                 } catch (Exception ex) {
@@ -144,10 +147,10 @@ public class SuperheroTracker {
 
             try {
                 //Display new count
-                int previousNumSaved = superheroes.get(choice - 1).getNumCiviliansSaved();
-                superheroes.get(choice - 1).setNumCiviliansSaved(count);
-                System.out.println("Number of civilians saved by " + superheroes.get(choice - 1).getName()
-                        + " has been updated from " + previousNumSaved + " to " + superheroes.get(choice - 1).getNumCiviliansSaved());
+                int previousNumSaved = l.get(choice - 1).getNumCiviliansSaved();
+                l.get(choice - 1).setNumCiviliansSaved(count);
+                System.out.println("Number of civilians saved by " + l.get(choice - 1).getName()
+                        + " has been updated from " + previousNumSaved + " to " + l.get(choice - 1).getNumCiviliansSaved());
 
             } catch (Exception ex) {
                 System.out.println("The number of civilians saved could not be updated!");
@@ -157,13 +160,19 @@ public class SuperheroTracker {
     }
 
     //Get top 3 superheroes
-    public static void getTopSuperheroes(int n) {
+    public static void getTopSuperheroes(int n, List<Superhero> l) {
         try {
             //Array for top heroes
             //Size is flexible, depends on parameter
             //Temp list
-            List<Superhero> arrSorted = new ArrayList<>();
-            arrSorted = superheroes;
+            List<Superhero> arrSorted = new ArrayList<Superhero>();
+            for (int i = 0; i < l.size(); i ++){
+                arrSorted.add(new Superhero(
+                        l.get(i).getName(),
+                        l.get(i).getSuperpower(),
+                        l.get(i).getHeightCM(),
+                        l.get(i).getNumCiviliansSaved()));
+            }
 
             //Loop through to sort heroes in a temp list
             for (int i = 0; i < arrSorted.size(); i++) {
@@ -248,45 +257,44 @@ public class SuperheroTracker {
     }
 
     //Write new data to database in json file
-    public static void writeToDatabase(List<Superhero> l, String path){
+    public static void writeToDatabase(List<Superhero> l, String path) {
         try {
             FileWriter superheroFile = new FileWriter(path);
             JsonObject objSuperheroes = new JsonObject();
             JsonArray arrSuperheroes = new JsonArray();
 
-            //Add heroes to object
-            for (int i = 0; i < superheroes.size(); i++){
-                //Temp array for individual hero info
-                JsonArray arrSuperheroInfo = new JsonArray();
+            for (int i = 0; i < l.size(); i++) {
+                JsonObject objSuperheroInfo = new JsonObject();
 
-                arrSuperheroInfo.add("name: " + superheroes.get(i).getName());
-                arrSuperheroInfo.add("superpower: " + superheroes.get(i).getSuperpower());
-                arrSuperheroInfo.add("heightCM: " + superheroes.get(i).getHeightCM());
-                arrSuperheroInfo.add("numSaved: " + superheroes.get(i).getNumCiviliansSaved());
+                objSuperheroInfo.addProperty("name", l.get(i).getName());
+                objSuperheroInfo.addProperty("superpower", l.get(i).getSuperpower());
+                objSuperheroInfo.addProperty("heightCM", l.get(i).getHeightCM());
+                objSuperheroInfo.addProperty("numSaved", l.get(i).getNumCiviliansSaved());
 
-                arrSuperheroes.add(arrSuperheroInfo);
+                arrSuperheroes.add(objSuperheroInfo);
             }
+
             objSuperheroes.add("superheroes", arrSuperheroes);
-            System.out.println("heroes " + arrSuperheroes);
-            try{
+
+            try {
                 superheroFile.write(objSuperheroes.toString());
                 System.out.println("Database updated!");
 
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 System.out.println("Could not update database...");
 
-            }finally {
+            } finally {
                 try {
 
                     superheroFile.flush();
                     superheroFile.close();
 
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     System.out.println("Could not close file...");
                 }
             }
-        }catch(Exception ex){
-            System.out.println("Could not creat file!");
+        } catch (Exception ex) {
+            System.out.println("Could not create file!");
         }
     }
 
@@ -310,109 +318,83 @@ public class SuperheroTracker {
         String filePath = "src/com/ckwright/assignment1/SuperheroData.json";
         File superheroData = new File(filePath);
 
-        //Check for database json file
-        if (!superheroData.exists()) {
+        //Extract database to list - database
+        List<Superhero> superheroes = new ArrayList<>();
+        extractDatabase(superheroData, superheroes);
+
+        //Check if exit
+        do {
+
             try {
-                //New file created, empty
-                superheroData.createNewFile();
-                fileDNE = false;
-                emptyFile = true;
-            } catch (Exception ex) {
-                //File cannot be created
-                System.out.println("Cannot create new file");
-                fileDNE = true;
-            }
-        } else {
-            try {
-                //Extract database to list - database
-                extractDatabase(superheroData, superheroes);
 
-                //File exists and is populated
-                fileDNE = false;
-                emptyFile = false;
-            } catch (Exception ex) {
-                //File exists, without data
-                fileDNE = false;
-                emptyFile = true;
-            }
-        }
+                //Must add at least one superhero before accessing other menu options
+                //Print menu & request user input
+                superheroMenu.printMenu();
 
-        //if file exists: continue
-        if (!fileDNE) {
-            //Check if exit
-            do {
-
-                try {
-
-                    //Must add at least one superhero before accessing other menu options
-                    if (!emptyFile) {
-                        //Print menu & request user input
-                        superheroMenu.printMenu();
-                        System.out.print("Enter >>");
-                        strChoice = input.next();
-                        choice = Integer.parseInt(strChoice);
-
-                    } else {
-                        choice = 2;
-                    }
-
-                    //Menu actions
-                    switch (choice) {
-                        //List all
-                        case 1:
-                            displayAllHeroes();
-                            break;
-
-                        //Add new
-                        case 2:
-                            addSuperhero();
-                            break;
-
-                        //Remove
-                        case 3:
-                            removeSuperhero();
-                            break;
-
-                        //Update civilians
-                        case 4:
-                            displayAllHeroes();
-                            updateCivilians();
-                            break;
-
-                        //List top 3
-                        case 5:
-                            getTopSuperheroes(3);
-                            break;
-
-                        //Debug dump
-                        case 6:
-                            System.out.println("All of my superheroes are, out of method: " + superheroes);
-                            break;
-
-                        //Exit!
-                        case 7:
-                            break;
-
-                        default:
-                            System.out.println("Please make a valid selection!");
-                            break;
-                    }
-                    System.out.println("");
-
-                } catch (Exception ex) {
-                    System.out.println("Please make a valid selection!");
+                //Make the user add a hero first, if there aren't any
+                if (superheroes.isEmpty()) {
+                    choice = 2;
+                } else {
+                    System.out.print("Enter >>");
+                    strChoice = input.next().trim();
+                    input.nextLine();
+                    choice = Integer.parseInt(strChoice);
                 }
 
-            } while (choice != 7);
+                //Menu actions
+                switch (choice) {
+                    //List all
+                    case 1:
+                        displayAllHeroes(superheroes);
+                        break;
 
-            //Overwrite/write to file
-            writeToDatabase(superheroes, filePath);
+                    //Add new
+                    case 2:
+                        addSuperhero(superheroes);
+                        break;
 
-        } else {
-            //File couldn't be created
-            System.out.println("File couldn't be created. Please check directory path.");
-            System.out.println("Program will end now. Sorry!");
-        }
+                    //Remove
+                    case 3:
+                        removeSuperhero(superheroes);
+                        break;
+
+                    //Update civilians
+                    case 4:
+                        displayAllHeroes(superheroes);
+                        updateCivilians(superheroes);
+                        break;
+
+                    //List top 3
+                    case 5:
+                        getTopSuperheroes(3, superheroes);
+                        break;
+
+                    //Debug dump
+                    case 6:
+                        for(int i = 0; i < superheroes.size(); i++){
+                            System.out.println(i + 1 + ". " + superheroes.get(i));
+                        }
+
+                        break;
+
+                    //Exit!
+                    case 7:
+                        break;
+
+                    default:
+                        System.out.println("Please make a valid selection!");
+                        break;
+                }
+                System.out.println("");
+
+            } catch (Exception ex) {
+                System.out.println("Please make a valid selection!");
+            }
+
+        } while (choice != 7);
+
+        //Overwrite/write to file
+        writeToDatabase(superheroes, filePath);
 
     }//main
 
