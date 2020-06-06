@@ -20,9 +20,6 @@ import java.util.Scanner;
 
 public class SuperheroTracker {
 
-    //Global list
-    //public static List<Superhero> superheroes = new ArrayList<>();
-
     //Globals for Scanner
     public static Scanner input = new Scanner(System.in);
     public static int choice;
@@ -51,9 +48,17 @@ public class SuperheroTracker {
             name = input.nextLine().trim();
         } while ((name == null) || name.isEmpty());
 
-        System.out.print("Enter Hero's height in cm: ");
-        double height = input.nextDouble();
-        input.nextLine();
+        String strHeight = null;
+        double height = 0;
+        do {
+            System.out.print("Enter Hero's height in cm: ");
+            strHeight = input.nextLine().trim();
+            try {
+                height = Double.parseDouble(strHeight);
+            }catch(Exception ex){
+                height = 0;
+            }
+        }while(height <= 0 );
 
         String power = null;
         do {
@@ -145,7 +150,7 @@ public class SuperheroTracker {
                 } catch (Exception ex) {
                     System.out.println("Please enter a valid number");
                 }
-            } while (count == -1);
+            } while (count < 0);
 
             try {
                 //Display new count
@@ -218,7 +223,6 @@ public class SuperheroTracker {
 
             //Extract all superheroes
             JsonArray jArrayOfHeroes = fileObject.get("superheroes").getAsJsonArray();
-            //List<Superhero> superheroes = new ArrayList<>();
             for (JsonElement heroElement : jArrayOfHeroes) {
                 //Get JsonObject
                 JsonObject heroJsonObject = heroElement.getAsJsonObject();
@@ -233,15 +237,9 @@ public class SuperheroTracker {
                     superpower = heroJsonObject.get("superpower").getAsString();
                 }
 
-                //Double heightCM = null;
-                //if(heroJsonObject.has("heightCM")){
                 Double heightCM = heroJsonObject.get("heightCM").getAsDouble();
-                //}
 
-                //Integer numCiviliansSaved = null;
-                //if(heroJsonObject.has("numSaved")){
                 Integer numCiviliansSaved = heroJsonObject.get("numSaved").getAsInt();
-                //}
 
                 Superhero superhero = new Superhero(name, superpower, heightCM, numCiviliansSaved);
                 l.add(superhero);
@@ -417,6 +415,9 @@ public class SuperheroTracker {
 
         //Overwrite/write to file
         writeToDatabase(superheroes, filePath);
+
+        input.close();
+
 
     }//main
 
