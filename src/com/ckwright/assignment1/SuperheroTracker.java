@@ -354,7 +354,7 @@ public class SuperheroTracker {
 
                     //If no heroes, force user to add one
                     if(superheroes.size() == 0){
-                        System.out.println("No database yet, so let's create one!");
+                        System.out.println("Database is empty!");
                         choice = 2;
                     }
                 }
